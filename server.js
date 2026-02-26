@@ -827,7 +827,23 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
     });
   });
 
-  // serve index.html on unknown routes (for client-side routing if added later)
+  const pageRoutes = {
+    '/': 'index.html',
+    '/resources': 'resources.html',
+    '/gradepilot': 'gradepilot.html',
+    '/study-plus': 'study-plus.html',
+    '/ai-tutor': 'ai-tutor.html',
+    '/developer': 'developer.html',
+    '/contributors': 'contributors.html'
+  };
+
+  Object.entries(pageRoutes).forEach(([routePath, fileName]) => {
+    app.get(routePath, (req, res) => {
+      res.sendFile(path.join(__dirname, fileName));
+    });
+  });
+
+  // Fallback page for unknown browser routes.
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
   });

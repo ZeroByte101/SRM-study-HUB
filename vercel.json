@@ -7,6 +7,12 @@
       "config": {
         "includeFiles": [
           "index.html",
+          "resources.html",
+          "gradepilot.html",
+          "study-plus.html",
+          "ai-tutor.html",
+          "developer.html",
+          "contributors.html",
           "app.js",
           "style.css",
           "db.json"

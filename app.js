@@ -253,8 +253,8 @@ const SRM_DETAILS = {
   },
   links: {
     instagram: "https://www.instagram.com/2.iyes/",
-    whatsapp: "#",
-    contributor: "#"
+    whatsapp: "",
+    contributor: "https://www.instagram.com/2.iyes/"
   },
   source: ""
 };
@@ -435,6 +435,19 @@ function renderProfileIdentity() {
 function setAuthPopupMode(mode) {
   authPopupMode = mode === "signup" ? "signup" : "signin";
 
+  const showSignInBtn = byId("showSignInBtn");
+  const showSignUpBtn = byId("showSignUpBtn");
+  if (showSignInBtn) {
+    const active = authPopupMode === "signin";
+    showSignInBtn.classList.toggle("active", active);
+    showSignInBtn.setAttribute("aria-selected", String(active));
+  }
+  if (showSignUpBtn) {
+    const active = authPopupMode === "signup";
+    showSignUpBtn.classList.toggle("active", active);
+    showSignUpBtn.setAttribute("aria-selected", String(active));
+  }
+
   if (currentUser) return;
   const signInForm = byId("signInForm");
   const signUpForm = byId("signUpForm");
@@ -549,10 +562,10 @@ function applyTheme(theme) {
   const themeToggle = byId("themeToggle");
   if (!themeToggle) return;
 
-  const nextMode = theme === "dark" ? "Day Mode" : "Night Mode";
-  themeToggle.textContent = nextMode;
-  themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
-  themeToggle.setAttribute("aria-label", `Switch to ${nextMode.toLowerCase()}`);
+  const darkActive = theme === "dark";
+  themeToggle.checked = darkActive;
+  themeToggle.setAttribute("aria-checked", String(darkActive));
+  themeToggle.setAttribute("aria-label", darkActive ? "Switch to light mode" : "Switch to dark mode");
 }
 
 function initThemeToggle() {
@@ -562,9 +575,8 @@ function initThemeToggle() {
 
   if (!themeToggle) return;
 
-  themeToggle.addEventListener("click", () => {
-    const currentTheme = document.body.getAttribute("data-theme") === "dark" ? "dark" : "light";
-    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+  themeToggle.addEventListener("change", () => {
+    const nextTheme = themeToggle.checked ? "dark" : "light";
     applyTheme(nextTheme);
 
     try {
@@ -573,6 +585,30 @@ function initThemeToggle() {
       // If storage is blocked, theme still applies for current session.
     }
   });
+}
+
+function formatHeaderDateTime(now = new Date()) {
+  const dateLabel = now.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short"
+  });
+  const timeLabel = now.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+  return `${dateLabel} | ${timeLabel}`;
+}
+
+function initHeaderDateTime() {
+  const node = byId("headerDateTime");
+  if (!node) return;
+
+  const renderNow = () => {
+    node.textContent = formatHeaderDateTime(new Date());
+  };
+
+  renderNow();
+  setInterval(renderNow, 1000);
 }
 
 function setText(id, value) {
@@ -790,9 +826,12 @@ function renderStaticContent() {
   const whatsapp = byId("whatsappLink");
   const contributor = byId("contributorLink");
 
-  if (instagram) instagram.href = SRM_DETAILS.links.instagram;
-  if (whatsapp) whatsapp.href = SRM_DETAILS.links.whatsapp;
-  if (contributor) contributor.href = SRM_DETAILS.links.contributor;
+  const instagramUrl = String(SRM_DETAILS.links.instagram || "#").trim() || "#";
+  const contributorUrl = String(SRM_DETAILS.links.contributor || "").trim() || instagramUrl;
+
+  if (instagram) instagram.href = instagramUrl;
+  if (whatsapp) whatsapp.remove();
+  if (contributor) contributor.href = contributorUrl;
 }
 
 function normalizeMessage(item) {
@@ -865,7 +904,10 @@ async function loadChatHistory() {
 }
 
 function initChat() {
+  const chat = byId("chat");
   const hint = byId("chatHint");
+  if (!chat && !hint) return;
+
   if (typeof io !== "function") {
     if (hint) hint.textContent = "Real-time chat is currently unavailable.";
     return;
@@ -975,6 +1017,9 @@ function renderAttendance(records) {
 }
 
 async function loadAttendance() {
+  const node = byId("attendanceList");
+  if (!node) return;
+
   try {
     const response = await fetch(apiUrl("/attendance"));
     const data = await response.json();
@@ -1124,29 +1169,29 @@ function renderProfileData(profile) {
 function renderAuthState(user) {
   currentUser = user || null;
 
-  const signOutBtn = byId("signOutBtn");
+  const profileSignOutBtn = byId("profileSignOutBtn");
   const signInForm = byId("signInForm");
   const signUpForm = byId("signUpForm");
-  const openSignInBtn = byId("openSignInBtn");
-  const openSignUpBtn = byId("openSignUpBtn");
+  const openAuthBtn = byId("openAuthBtn");
+  const authModeSwitch = byId("authModeSwitch");
   const profileAttendanceCard = byId("profileAttendanceCard");
   const profileSummaryCard = byId("profileSummaryCard");
 
   if (currentUser) {
-    if (signOutBtn) signOutBtn.hidden = false;
+    if (profileSignOutBtn) profileSignOutBtn.hidden = false;
     if (signInForm) signInForm.hidden = true;
     if (signUpForm) signUpForm.hidden = true;
-    if (openSignInBtn) openSignInBtn.hidden = true;
-    if (openSignUpBtn) openSignUpBtn.hidden = true;
+    if (authModeSwitch) authModeSwitch.hidden = true;
+    if (openAuthBtn) openAuthBtn.textContent = "My Account";
     if (profileAttendanceCard) profileAttendanceCard.hidden = false;
     if (profileSummaryCard) profileSummaryCard.hidden = false;
 
     const displayName = currentUser.name || currentUser.email || "Student";
     setAuthMessage(`Signed in as ${displayName}. Profile data is private to this account.`);
   } else {
-    if (signOutBtn) signOutBtn.hidden = true;
-    if (openSignInBtn) openSignInBtn.hidden = false;
-    if (openSignUpBtn) openSignUpBtn.hidden = false;
+    if (profileSignOutBtn) profileSignOutBtn.hidden = true;
+    if (authModeSwitch) authModeSwitch.hidden = false;
+    if (openAuthBtn) openAuthBtn.textContent = "Get Started";
     setAuthPopupMode(authPopupMode);
     if (profileAttendanceCard) profileAttendanceCard.hidden = true;
     if (profileSummaryCard) profileSummaryCard.hidden = true;
@@ -1451,27 +1496,36 @@ function initPopupSystem() {
 function initAuthProfile() {
   const signInForm = byId("signInForm");
   const signUpForm = byId("signUpForm");
-  const signOutBtn = byId("signOutBtn");
+  const profileSignOutBtn = byId("profileSignOutBtn");
   const saveAttendanceBtn = byId("saveProfileAttendanceBtn");
-  const openSignInBtn = byId("openSignInBtn");
-  const openSignUpBtn = byId("openSignUpBtn");
+  const openAuthBtn = byId("openAuthBtn");
+  const showSignInBtn = byId("showSignInBtn");
+  const showSignUpBtn = byId("showSignUpBtn");
   const profilePhotoInput = byId("profilePhotoInput");
 
   if (signInForm) signInForm.addEventListener("submit", signIn);
   if (signUpForm) signUpForm.addEventListener("submit", signUp);
-  if (signOutBtn) signOutBtn.addEventListener("click", signOut);
+  if (profileSignOutBtn) profileSignOutBtn.addEventListener("click", signOut);
   if (saveAttendanceBtn) saveAttendanceBtn.addEventListener("click", saveProfileAttendance);
   if (profilePhotoInput) profilePhotoInput.addEventListener("change", handleProfilePhotoChange);
 
-  if (openSignInBtn) {
-    openSignInBtn.addEventListener("click", () => {
-      openProfilePopup("signin");
+  if (openAuthBtn) {
+    openAuthBtn.addEventListener("click", () => {
+      openProfilePopup(currentUser ? "signin" : authPopupMode);
     });
   }
 
-  if (openSignUpBtn) {
-    openSignUpBtn.addEventListener("click", () => {
-      openProfilePopup("signup");
+  if (showSignInBtn) {
+    showSignInBtn.addEventListener("click", () => {
+      setAuthPopupMode("signin");
+      byId("signInEmail")?.focus();
+    });
+  }
+
+  if (showSignUpBtn) {
+    showSignUpBtn.addEventListener("click", () => {
+      setAuthPopupMode("signup");
+      byId("signUpName")?.focus();
     });
   }
 
@@ -1484,7 +1538,7 @@ const HELP_BOT_TOPICS = [
   {
     keys: ["profile", "sign in", "sign up", "login", "attendance history", "private"],
     answer:
-      "Use the Profile popup (left profile circle or top buttons) to sign in/sign up and save private subject-wise attendance history visible only to your account.",
+      "Use the Profile popup (left profile circle or the Get Started button) to sign in/sign up and save private subject-wise attendance history visible only to your account.",
     anchor: "popup:profileModal",
     actionLabel: "Open Profile"
   },
@@ -1492,63 +1546,63 @@ const HELP_BOT_TOPICS = [
     keys: ["upload", "summarize", "summary", "pdf", "jpg", "jpeg", "topic detect", "youtube"],
     answer:
       "In AI Tutor, upload your note file and click Analyze Uploaded File. It returns topic, summary, and related YouTube videos.",
-    anchor: "#snaplearn",
+    anchor: "/ai-tutor",
     actionLabel: "Open AI Upload"
   },
   {
     keys: ["resource", "pyq", "notes", "semester", "subject", "pack"],
     answer:
       "Open the Resources section to search videos and browse semester-wise subjects, PYQ packs, and notes.",
-    anchor: "#resources",
+    anchor: "/resources",
     actionLabel: "Go to Resources"
   },
   {
     keys: ["gpa", "cgpa", "gradepilot", "grade predictor", "calculator"],
     answer:
       "Use GradePilot+ for GPA calculator modes and the attendance utility in the same section.",
-    anchor: "#gradepilot",
+    anchor: "/gradepilot",
     actionLabel: "Open GradePilot+"
   },
   {
     keys: ["attendance", "student id", "save attendance", "att"],
     answer:
       "In GradePilot+, enter Student ID and attendance percentage (0-100), then click Save Attendance.",
-    anchor: "#gradepilot",
+    anchor: "/gradepilot",
     actionLabel: "Open Attendance Tool"
   },
   {
     keys: ["chat", "message", "live", "socket"],
     answer:
       "Use the Study Plus section for real-time chat. Type a message and press Enter or click Send.",
-    anchor: "#study-plus",
+    anchor: "/study-plus",
     actionLabel: "Open Study Plus"
   },
   {
     keys: ["ai tutor", "snaplearn", "summaries", "quiz", "flashcards"],
     answer:
       "The AI Tutor section explains how uploaded study material can be converted to summaries, quizzes, and revision formats.",
-    anchor: "#snaplearn",
+    anchor: "/ai-tutor",
     actionLabel: "Open AI Tutor"
   },
   {
     keys: ["theme", "dark", "light", "night", "day", "toggle"],
     answer:
-      "Use the Night Mode / Day Mode button in the top bar to switch themes. Your choice is saved on this device.",
-    anchor: "#home",
+      "Use the animated theme switch in the top bar to switch light and dark modes. Your choice is saved on this device.",
+    anchor: "/",
     actionLabel: "Back to Top"
   },
   {
     keys: ["developer", "owner", "contributor", "admin", "team"],
     answer:
       "Developer and team information is shown in the Developer and Contributors sections.",
-    anchor: "#developer",
+    anchor: "/developer",
     actionLabel: "Open Developer"
   },
   {
     keys: ["tour", "website", "sections", "explain"],
     answer:
       "Website flow: Home -> Resources -> GradePilot+ -> Study Plus -> Profile popup -> AI Tutor -> Developer -> Contributors -> Community Links.",
-    anchor: "#home",
+    anchor: "/",
     actionLabel: "Start Tour"
   }
 ];
@@ -1647,13 +1701,16 @@ function initHelpBot() {
   const openPanel = () => {
     panel.hidden = false;
     toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "Close help bot");
     input.focus();
   };
 
   const closePanel = () => {
     panel.hidden = true;
     toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open help bot");
   };
+  toggle.setAttribute("aria-label", panel.hidden ? "Open help bot" : "Close help bot");
 
   if (!byId("helpBotMessages")?.childElementCount) {
     addHelpBotMessage(
@@ -2713,6 +2770,7 @@ function registerActions() {
 document.addEventListener("DOMContentLoaded", () => {
   initHomeNavigation();
   initThemeToggle();
+  initHeaderDateTime();
   renderStaticContent();
   initPopupSystem();
   initGradePilotTools();

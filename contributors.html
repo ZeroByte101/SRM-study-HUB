@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SRM Study Hub</title>
+  <title>Contributors | SRM Study Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -20,13 +20,13 @@
       </button>
       <a class="brand" href="/"><span>SRM</span><span>Study Hub</span></a>
       <nav class="nav-links" aria-label="Primary navigation">
-        <a class="active" href="/">Home</a>
+        <a href="/">Home</a>
         <a href="/resources">Resources</a>
         <a href="/gradepilot">GradePilot+</a>
         <a href="/study-plus">Study Plus</a>
         <a href="/ai-tutor">AI Tutor</a>
         <a href="/developer">Developer</a>
-        <a href="/contributors">Contributors</a>
+        <a class="active" href="/contributors">Contributors</a>
       </nav>
       <div class="auth-actions">
         <label class="theme-switch" aria-label="Theme switch">
@@ -56,40 +56,15 @@
   </header>
 
   <main>
-    <section class="hero container">
-      <div class="hero-content">
-        <p id="heroPill" class="pill"></p>
-        <h1 id="heroTitle"></h1>
-        <p id="heroSubtitle" class="hero-subtitle"></p>
-        <p id="heroQuote" class="hero-quote"></p>
-        <div class="hero-cta">
-          <a href="/resources" class="btn-primary">Get Resources</a>
-          <a href="/ai-tutor" class="btn-secondary">Try AI Tutor</a>
-        </div>
+    <section id="contributors" class="module container">
+      <div class="module-head">
+        <p class="kicker">Contributors</p>
+        <h2>Contributor Board</h2>
       </div>
-      <aside class="hero-panel">
-        <h2>What Is Available</h2>
-        <ul id="resourceHighlights" class="list"></ul>
-      </aside>
-    </section>
-
-    <section class="features container" aria-label="Core feature summary">
-      <a class="feature-card feature-link" href="/resources">
-        <h3>Comprehensive Resources</h3>
-        <p>Previous year papers, notes, and guidance organized semester-wise and subject-wise.</p>
-      </a>
-      <a class="feature-card feature-link" href="/gradepilot">
-        <h3>GradePilot+</h3>
-        <p>Attendance utilities and GPA/CGPA/grade prediction calculators.</p>
-      </a>
-      <a class="feature-card feature-link" href="/study-plus">
-        <h3>Study Plus</h3>
-        <p>Study tools, quick utilities, and live student chat in one place.</p>
-      </a>
-      <a class="feature-card feature-link" href="/contributors">
-        <h3>Community Driven</h3>
-        <p>A student-powered ecosystem where resources and updates are shared collaboratively.</p>
-      </a>
+      <article class="card single">
+        <p id="contributorBlurb"></p>
+        <div id="contributorGrid" class="contributor-grid"></div>
+      </article>
     </section>
 
     <section class="community container">
