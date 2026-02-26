@@ -388,6 +388,11 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
       percentage REAL NOT NULL,
       createdAt TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS siteContent (
+      id TEXT PRIMARY KEY,
+      payload TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
     CREATE INDEX IF NOT EXISTS idx_attendanceProfiles_user_createdAt
       ON attendanceProfiles (userId, createdAt DESC);
   `);
@@ -401,7 +406,7 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
   }
 
   function tableCount(tableName) {
-    const allowed = new Set(['users', 'chats', 'events', 'attendance', 'attendanceProfiles']);
+    const allowed = new Set(['users', 'chats', 'events', 'attendance', 'attendanceProfiles', 'siteContent']);
     if (!allowed.has(tableName)) return 0;
     const row = db.prepare(`SELECT COUNT(*) AS count FROM ${tableName}`).get();
     return Number(row?.count || 0);
@@ -449,6 +454,18 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
     ORDER BY createdAt DESC
   `);
 
+  const SITE_CONTENT_ID = 'main';
+  const upsertSiteContentStmt = db.prepare(`
+    INSERT INTO siteContent (id, payload, updatedAt)
+    VALUES (?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      payload = excluded.payload,
+      updatedAt = excluded.updatedAt
+  `);
+  const getSiteContentStmt = db.prepare(
+    'SELECT payload, updatedAt FROM siteContent WHERE id = ?'
+  );
+
   function getChats() {
     return getChatsStmt.all().map(row => safeParseJson(row.payload, row.payload));
   }
@@ -470,13 +487,46 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
     return result;
   }
 
+  function isPlainObject(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function readSiteContentFromFile() {
+    const filePath = path.join(__dirname, 'site-content.json');
+    if (!fs.existsSync(filePath)) return null;
+
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8');
+      const parsed = safeParseJson(raw, null);
+      return isPlainObject(parsed) ? parsed : null;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function saveSiteContent(details) {
+    if (!isPlainObject(details)) return null;
+    const now = new Date().toISOString();
+    upsertSiteContentStmt.run(SITE_CONTENT_ID, JSON.stringify(details), now);
+    return { details, updatedAt: now };
+  }
+
+  function getSiteContent() {
+    const row = getSiteContentStmt.get(SITE_CONTENT_ID);
+    if (!row) return null;
+    const details = safeParseJson(row.payload, null);
+    if (!isPlainObject(details)) return null;
+    return { details, updatedAt: row.updatedAt };
+  }
+
   function migrateLegacyJsonIfNeeded() {
     const isEmpty =
       tableCount('users') === 0 &&
       tableCount('chats') === 0 &&
       tableCount('events') === 0 &&
       tableCount('attendance') === 0 &&
-      tableCount('attendanceProfiles') === 0;
+      tableCount('attendanceProfiles') === 0 &&
+      tableCount('siteContent') === 0;
     if (!isEmpty) return;
 
     const legacyPath = path.join(__dirname, 'db.json');
@@ -582,6 +632,11 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
     insertEventStmt.run('Texus 2026', 'Feb 27 & 28');
   }
 
+  if (tableCount('siteContent') === 0) {
+    const seededContent = readSiteContentFromFile();
+    if (seededContent) saveSiteContent(seededContent);
+  }
+
   function requireAuth(req, res, next) {
     const token = getTokenFromRequest(req);
     if (!token) return res.status(401).json({ error: 'Sign in required' });
@@ -596,6 +651,19 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
     }
 
     req.auth = { token, user };
+    next();
+  }
+
+  function requireSiteAdmin(req, res, next) {
+    const expectedKey = String(process.env.SITE_ADMIN_KEY || '').trim();
+    if (!expectedKey) {
+      return res.status(503).json({ error: 'SITE_ADMIN_KEY is not configured on server' });
+    }
+
+    const providedKey = String(req.headers['x-admin-key'] || req.body?.adminKey || '').trim();
+    if (!providedKey || providedKey !== expectedKey) {
+      return res.status(401).json({ error: 'Invalid admin key' });
+    }
     next();
   }
 
@@ -738,6 +806,25 @@ async function fetchYouTubeVideos(topic, maxResults = 6) {
   });
 
   // APIs
+  app.get('/site-data', (req, res) => {
+    const data = getSiteContent();
+    if (!data) {
+      return res.json({ details: null, updatedAt: null });
+    }
+    return res.json(data);
+  });
+
+  app.put('/site-data', requireSiteAdmin, (req, res) => {
+    const details = req.body?.details;
+    if (!details || typeof details !== 'object' || Array.isArray(details)) {
+      return res.status(400).json({ error: 'details object is required' });
+    }
+
+    const saved = saveSiteContent(details);
+    if (!saved) return res.status(400).json({ error: 'Unable to save site content' });
+    return res.json({ saved: true, ...saved });
+  });
+
   app.get('/events', (req, res) => res.json(getEvents()));
   app.get('/chats', (req, res) => res.json(getChats()));
   app.get('/attendance', (req, res) => res.json(getAttendanceMap()));

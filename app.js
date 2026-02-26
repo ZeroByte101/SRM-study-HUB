@@ -1,4 +1,4 @@
-const SRM_DETAILS = {
+let SRM_DETAILS = {
   hero: {
     pill: "SRMIST Academic Companion",
     title: "An Academic Tool Built For SRMIST",
@@ -317,6 +317,49 @@ function apiUrl(pathname) {
   if (/^https?:\/\//i.test(raw)) return raw;
   const safePath = raw.startsWith("/") ? raw : `/${raw}`;
   return `${API_BASE}${safePath}`;
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function mergeSiteDetails(base, incoming) {
+  if (Array.isArray(base)) {
+    return Array.isArray(incoming) ? incoming : base;
+  }
+
+  if (isPlainObject(base)) {
+    if (!isPlainObject(incoming)) return Object.assign({}, base);
+
+    const merged = {};
+    const keys = new Set([...Object.keys(base), ...Object.keys(incoming)]);
+    keys.forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(base, key)) {
+        merged[key] = mergeSiteDetails(base[key], incoming[key]);
+      } else {
+        merged[key] = incoming[key];
+      }
+    });
+    return merged;
+  }
+
+  if (incoming === undefined || incoming === null) return base;
+  return incoming;
+}
+
+async function loadSiteDetails() {
+  try {
+    const response = await fetch(apiUrl("/site-data"));
+    if (!response.ok) return;
+
+    const payload = await response.json();
+    const remoteDetails = payload && isPlainObject(payload.details) ? payload.details : null;
+    if (!remoteDetails) return;
+
+    SRM_DETAILS = mergeSiteDetails(SRM_DETAILS, remoteDetails);
+  } catch (_err) {
+    // Keep bundled defaults if dynamic site data is unavailable.
+  }
 }
 
 function getProfilePhotoStorageKey(user) {
@@ -2767,10 +2810,11 @@ function registerActions() {
   if (analyzeNoteBtn) analyzeNoteBtn.addEventListener("click", analyzeUploadedNote);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initHomeNavigation();
   initThemeToggle();
   initHeaderDateTime();
+  await loadSiteDetails();
   renderStaticContent();
   initPopupSystem();
   initGradePilotTools();

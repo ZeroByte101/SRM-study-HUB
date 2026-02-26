@@ -1,0 +1,280 @@
+{
+  "hero": {
+    "pill": "SRMIST Academic Companion",
+    "title": "An Academic Tool Built For SRMIST",
+    "subtitle": "A single place for semester resources, study tools, quick utilities, and student collaboration data.",
+    "quote": "A focused hub where study execution replaces delay."
+  },
+  "highlights": [
+    "Semester-wise subject catalog across Semester 1 to Semester 8",
+    "Subject-level resource packs with PYQ and notes references",
+    "GradePilot+, Study Plus tools, and AI tutor feature information",
+    "Owner-managed hub with editable project data"
+  ],
+  "resources": {
+    "semesters": [
+      {
+        "semester": "Semester 1",
+        "subjects": [
+          "Calculus And Linear Algebra",
+          "Chemistry",
+          "Philosophy Of Engineering",
+          "Introduction To Computational Biology",
+          "Programming For Problem Solving",
+          "Fundamental Of Economics (FOE)",
+          "Biomedical Sensors",
+          "Foreign Languages",
+          "Cell Biology",
+          "Microbiology",
+          "Physical And Analytical Chemistry",
+          "Biochemistry",
+          "Basic Civil & Mechanical Workshop"
+        ]
+      },
+      {
+        "semester": "Semester 2",
+        "subjects": [
+          "Advanced Calculus And Complex Analysis",
+          "Electrical And Electronics Engineering",
+          "Semiconductor Physics And Computational Methods",
+          "Physics-Mechanics",
+          "Object Oriented Design And Programming",
+          "Communicative English",
+          "Electromagnetic Physics",
+          "Engineering Mechanics",
+          "Electronic System And PCB Design"
+        ]
+      },
+      {
+        "semester": "Semester 3",
+        "subjects": [
+          "Data Structures And Algorithm",
+          "Computer Organization And Architecture",
+          "Operating Systems",
+          "Transforms And Boundary Value Problems",
+          "Advanced Programming Practice",
+          "Design Thinking And Methodology",
+          "Digital Logic Design",
+          "Solid State Devices",
+          "Biochemistry",
+          "Electromagnetic Thoery And Interference",
+          "Basic Chemical Engineering",
+          "Bioprocess Principles",
+          "Genetics And Cytogenetics",
+          "Microbiology",
+          "Social Engineering",
+          "Numerical Methods & Analysis",
+          "Foundation of Data Science (FDS)"
+        ]
+      },
+      {
+        "semester": "Semester 4",
+        "subjects": [
+          "Design And Analysis Of Algorithms",
+          "Database Management Systems",
+          "Artificial Intelligence",
+          "Probability And Queueing Theory",
+          "Social Engineering",
+          "Bioprocess Engineering",
+          "Cell Communication And Signaling",
+          "Software Process",
+          "Chemical Engineering Principles",
+          "Molecular Biology",
+          "Internet Of Things (IOT)"
+        ]
+      },
+      {
+        "semester": "Semester 5",
+        "subjects": [
+          "Discrete Mathematics",
+          "Full Stack Web Development",
+          "Formal Language And Automata",
+          "Computer Networks",
+          "Machine Learning",
+          "Professional Elective 2",
+          "Open Elective 1",
+          "Community Connect"
+        ]
+      },
+      {
+        "semester": "Semester 6",
+        "subjects": [
+          "Data Science",
+          "Software Engineering And Project Management",
+          "Compiler Design",
+          "Professional Elective 3",
+          "Professional Elective 4",
+          "Open Elective 2",
+          "Project & MOOC"
+        ]
+      },
+      {
+        "semester": "Semester 7",
+        "subjects": [
+          "Behavioral Psychology",
+          "Professional Elective 5",
+          "Professional Elective 6",
+          "Professional Elective 7",
+          "Professional Elective 8",
+          "Open Elective 3"
+        ]
+      },
+      {
+        "semester": "Semester 8",
+        "subjects": [
+          "Major Project",
+          "Internship"
+        ]
+      }
+    ],
+    "featuredPacks": [
+      {
+        "subject": "Calculus And Linear Algebra",
+        "pyq": [
+          "PYQ Dec 2023",
+          "PYQ Jan 2023",
+          "PYQ May 2022",
+          "PYQ Nov 2024",
+          "CT1 Papers 2025",
+          "CT1 Answer Keys 2025"
+        ],
+        "notes": [
+          "Chapter 1: Matrices",
+          "Chapter 2: Functions Of Several Variables",
+          "Chapter 3: Ordinary Differential Equations",
+          "Chapter 4: Differential Calculus And Beta Gamma Functions",
+          "Chapter 5: Sequence And Series"
+        ],
+        "strategy": [
+          "Maths semester exam strategy sheet",
+          "General semester exam rules"
+        ]
+      },
+      {
+        "subject": "Chemistry",
+        "pyq": [
+          "PYQ May 2024",
+          "PYQ May 2023",
+          "PYQ Jan 2023",
+          "PYQ Nov 2018",
+          "CT Papers 09/09/2025",
+          "CT Papers 12/09/2025"
+        ],
+        "notes": [
+          "Periodic Properties",
+          "Free Energy In Chemical Equilibria",
+          "Stereo Chemistry And Organic Reactions",
+          "Polymers",
+          "Advanced Engineering Materials"
+        ],
+        "strategy": [
+          "Strategy section marked as coming soon"
+        ]
+      },
+      {
+        "subject": "Data Structures And Algorithm",
+        "pyq": [
+          "PYQ Master PDF",
+          "PYQ Nov 2024",
+          "PYQ May 2023",
+          "PYQ Jul 2023",
+          "PYQ CT 2024 & 2025"
+        ],
+        "notes": [
+          "Unit 1 notes",
+          "Unit 2 notes",
+          "Unit 3 notes",
+          "Unit 4 notes",
+          "Unit 5 notes",
+          "Best books list"
+        ],
+        "strategy": [
+          "Strategy section marked as coming soon"
+        ]
+      },
+      {
+        "subject": "Database Management Systems",
+        "pyq": [
+          "CT Papers",
+          "SEM Papers"
+        ],
+        "notes": [
+          "Unit 1",
+          "Unit 2",
+          "Unit 3",
+          "Unit 4",
+          "Unit 5"
+        ],
+        "strategy": [
+          "Strategy section marked as coming soon"
+        ]
+      }
+    ]
+  },
+  "gradePilot": {
+    "tools": [
+      "GPA Calculator",
+      "CGPA Calculator",
+      "Grade Predictor"
+    ],
+    "note": "This section includes three calculator modes."
+  },
+  "studyPlus": {
+    "tools": [
+      {
+        "name": "Branch-wise subjects",
+        "description": "Semester-oriented subject reference by branch."
+      },
+      {
+        "name": "Study Timer",
+        "description": "Pomodoro-style timer with break cycles."
+      },
+      {
+        "name": "Focus YouTube",
+        "description": "Distraction-reduced video learning mode."
+      },
+      {
+        "name": "Quick Notes",
+        "description": "Capture key study points during sessions."
+      },
+      {
+        "name": "Number Converter",
+        "description": "Convert values across binary, decimal, and hexadecimal."
+      },
+      {
+        "name": "Logic Gate Simulator",
+        "description": "Visualize and test logic gate behavior."
+      },
+      {
+        "name": "Binary Operations",
+        "description": "Perform AND, OR, XOR operations quickly."
+      }
+    ],
+    "coaCredit": "Study tool descriptions are managed in this local project."
+  },
+  "snaplearn": {
+    "intro": "The AI tutor workflow converts uploaded study material into multiple revision formats.",
+    "features": [
+      "Upload and convert PPT/PDF/notes into clean, searchable content",
+      "Generate concise notes, summaries, flowcharts, and diagrams",
+      "Create podcast-style output, flashcards, and quizzes",
+      "Designed for personal study workflows"
+    ]
+  },
+  "developer": {
+    "name": "Project Owner",
+    "batch": "Maintained by you",
+    "quote": "Built and maintained in-house"
+  },
+  "admins": [],
+  "contributors": {
+    "blurb": "No external contributor list is currently configured.",
+    "people": []
+  },
+  "links": {
+    "instagram": "https://www.instagram.com/2.iyes/",
+    "whatsapp": "",
+    "contributor": "https://www.instagram.com/2.iyes/"
+  },
+  "source": ""
+}

@@ -8,7 +8,7 @@ A local Express and Socket.IO app for SRM Ramapuram student workflows.
 - Attendance tracking with LowDB (`db.json`)
 - Campus events feed from local data
 - Topic-based study video search through `/videos/:topic`
-- Curated SRM Ramapuram institutional snapshot in the frontend
+- Dynamic site content API (`GET /site-data`) with frontend fallback defaults
 
 ## Getting Started
 
@@ -31,7 +31,8 @@ A local Express and Socket.IO app for SRM Ramapuram student workflows.
 ## Notes
 
 - Backend API and socket contracts remain unchanged.
-- Institutional details shown in the UI are curated static content sourced from official SRM Ramapuram pages.
+- Core website content is served from `siteContent` in SQLite (seeded from `site-content.json` on first run).
+- You can update content dynamically using `PUT /site-data` with `x-admin-key` header matching `SITE_ADMIN_KEY`.
 - Data in `db.json` is local/demo storage.
 
 ## Source Pages Used for Institutional Snapshot

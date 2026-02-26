@@ -15,6 +15,7 @@
           "contributors.html",
           "app.js",
           "style.css",
+          "site-content.json",
           "db.json"
         ]
       }
